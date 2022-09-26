@@ -79,20 +79,20 @@ and your `#!yaml MachineInventory` has that same key with that value, it will ma
     --8<-- "examples/quickstart/selector.yaml"
     ```
     
-    As you can see this is a very simple selector that checks the key `node-location` for the value `europe`
+    As you can see this is a very simple `selector` named `#!yaml my-machine-selector` that matches the `key` `#!yaml location` for any `values` in the array with the one item: `europe`
     
     
     ```yaml title="cluster.yaml"
     --8<-- "examples/quickstart/cluster.yaml"
     ```
     
-    As you can see we are setting that our `#!yaml machineConfigRef` is of Kind `#!yaml MachineInventorySelectorTemplate` with the name `my-machine-selector`, which matches the selector we created.
+    As you can see we are setting our `Cluster` resource to a `#!yaml machineConfigRef` which is of `Kind` `#!yaml MachineInventorySelectorTemplate` with the `name` `#!yaml my-machine-selector`, which matches the selector we created.
     
     ```yaml title="registration.yaml"
     --8<-- "examples/quickstart/registration.yaml"
     ```
     
-    This creates a `#!yaml MachineRegistration` which will provide a unique URL which we will use with `elemental-register` to register
+    This creates a `#!yaml MachineRegistration` resource which will provide a unique URL which we will use with `elemental-register` to register
     the node during installation, so the operator can create a `#!yaml MachineInventory` which will be using to bootstrap the node.
     See that we set the label that match our selector here already, although it can always be added later to the `#!yaml MachineInventory`.
     
@@ -144,13 +144,18 @@ so we can use that url to obtain the proper yaml needed for the iso.
     
     First we need to obtain the `#!yaml RegistrationURL` that was generated for our `#!yaml MachineRegistration`
     ```bash
-    $ kubectl get machineregistration -n fleet-default my-test-registration -o jsonpath="{.status.registrationURL}"
+    kubectl get machineregistration -n fleet-default my-nodes -o jsonpath="{.status.registrationURL}"
+    ```
+    Example output:
+    ```
     https://172.18.0.2.sslip.io/elemental/registration/gsh4n8nj9gvbsjk4x7hxvnr5l6hmhbdbdffrmkwzrss2dtfbnpbmqp
     ```
     Then we need to visit that URL as that will provide the URL and CA certificate for unauthenticated requests:
     ```bash
-    $ curl --insecure https://172.18.0.2.sslip.io/elemental/registration/gsh4n8nj9gvbsjk4x7hxvnr5l6hmhbdbdffrmkwzrss2dtfbnpbmqp
-
+    curl --insecure https://172.18.0.2.sslip.io/elemental/registration/gsh4n8nj9gvbsjk4x7hxvnr5l6hmhbdbdffrmkwzrss2dtfbnpbmqp
+    ```
+    Example output:
+    ```
     elemental:
       registration:
         url: https://172.18.0.2.sslip.io/elemental/registration/gsh4n8nj9gvbsjk4x7hxvnr5l6hmhbdbdffrmkwzrss2dtfbnpbmqp
